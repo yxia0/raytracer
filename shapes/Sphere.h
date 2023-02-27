@@ -11,38 +11,31 @@
 #include "core/RayHitStructs.h"
 #include "core/Shape.h"
 
-namespace rt{
+namespace rt
+{
 
-class Sphere:public Shape{
+	class Sphere : public Shape
+	{
 
-public:
+	public:
+		//
+		// Constructors
+		//
+		Sphere(){};
+		Sphere(Vec3f center, float radius) : center(center), radius(radius){};
 
-	//
-	// Constructors
-	//
-	Sphere();
-	Sphere(Vec3f center, float radius):center(center), radius(radius){};
+		virtual ~Sphere();
 
-	virtual ~Sphere();
+		//
+		// Functions that need to be implemented, since Sphere is a subclass of Shape
+		//
+		Hit intersect(Ray ray);
 
+	private:
+		Vec3f center;
+		float radius;
+	};
 
-	//
-	// Functions that need to be implemented, since Sphere is a subclass of Shape
-	//
-	Hit intersect(Ray ray);
-
-private:
-
-	Vec3f center;
-	float radius;
-
-};
-
-
-
-} //namespace rt
-
-
-
+} // namespace rt
 
 #endif /* SPHERE_H_ */

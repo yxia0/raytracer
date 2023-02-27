@@ -5,9 +5,12 @@
  */
 #include "Sphere.h"
 
+namespace rt
+{
 
-namespace rt{
 
+	// Destructor
+	Sphere::~Sphere() {}
 
 	/**
 	 * Computes whether a ray hit the specific instance of a sphere shape and returns the hit data
@@ -17,18 +20,13 @@ namespace rt{
 	 * @return hit struct containing intersection information
 	 *
 	 */
-	Hit Sphere::intersect(Ray ray){
+	Hit Sphere::intersect(Ray ray)
+	{
 
 		Hit h;
 		//-----------to be implemented -------------
 
-
 		return h;
-
 	}
 
-
-
-} //namespace rt
-
-
+} // namespace rt
