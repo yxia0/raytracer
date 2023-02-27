@@ -4,13 +4,7 @@
  */
 #include "Shape.h"
 
+namespace rt
+{
 
-
-namespace rt{
-
-
-
-
-
-} //namespace rt
-
+} // namespace rt
