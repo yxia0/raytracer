@@ -9,33 +9,24 @@
 #include "core/Camera.h"
 #include "core/Scene.h"
 
-namespace rt{
+namespace rt
+{
 
+	/*
+	 * Raytracer class declaration
+	 */
+	class RayTracer
+	{
+	public:
+		RayTracer(){};
 
+		static Vec3f *render(Camera *camera, Scene *scene, int nbounces);
+		static Vec3f *tonemap(Vec3f *pixelbuffer, int bufferSize);
 
-/*
- * Raytracer class declaration
- */
-class RayTracer {
-public:
+	private:
+		static Vec3f castRay(Ray ray, std::vector<Shape *> shapes);
+	};
 
-	RayTracer();
-
-	static Vec3f* render(Camera* camera, Scene* scene, int nbounces);
-	static Vec3f* tonemap(Vec3f* pixelbuffer);
-
-
-private:
-
-
-};
-
-
-
-
-} //namespace rt
-
-
+} // namespace rt
 
 #endif /* RAYTRACER_H_ */
-
