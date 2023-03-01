@@ -34,7 +34,7 @@ int main(int argc, char* argv[]){
 	//querying members
 	std::cout<<"d has member 'scene':"<<(d.HasMember("scene")?"true":"false")<<std::endl;
 
-	//retieve member
+	//retrieve member
 	Value& scene=d["scene"];
 
 	std::cout<<"scene has member 'shapes':"<<(scene.HasMember("shapes")?"true":"false")<<std::endl;
