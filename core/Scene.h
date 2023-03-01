@@ -24,6 +24,7 @@ namespace rt
 		Scene(){};
 
 		void createScene(Value &scenespecs);
+		std::vector<Shape *> getShapes();
 
 	private:
 		std::vector<LightSource *> lightSources;

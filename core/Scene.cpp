@@ -10,6 +10,17 @@
 
 namespace rt
 {
+
+	/**
+	 * @brief Retrun the shapes vector
+	 *
+	 * @return shapes a vector containing shape objects in a scene
+	 */
+	std::vector<Shape *> Scene::getShapes()
+	{
+		return shapes;
+	}
+
 	/**
 	 * @brief Parses json scene object to generate scene to render
 	 *
@@ -62,7 +73,7 @@ namespace rt
 		else
 		{
 			Value &objects = scenespecs["shapes"];
-			for (SizeType i = 0; i < objects.Size(); i++)
+			for (size_t i = 0; i < objects.Size(); i++)
 			{
 
 				std::string shapeType = objects[i].GetObject()["type"].GetString();
