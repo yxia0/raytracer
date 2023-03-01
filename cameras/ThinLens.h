@@ -8,35 +8,32 @@
 
 #include "core/Camera.h"
 
+namespace rt
+{
 
-namespace rt{
+	class ThinLens : public Camera
+	{
+	public:
+		//
+		// Constructors
+		//
+		ThinLens() : Camera(){};
+		ThinLens(int width, int height, int fov);
 
-class ThinLens:public Camera{
-public:
+		//
+		// Destructor
+		//
+		~ThinLens(){};
 
-	//
-	// Constructors
-	//
-	ThinLens():Camera(){};
-	ThinLens(int width, int height, int fov);
+		//
+		// print function (implementing abstract function of base class)
+		//
+		void printCamera();
 
-	//
-	//Destructor
-	//
-	~ThinLens(){};
+		// get ray function
+		Ray getRay(int hIndex, int wIndex);
+	};
 
-	//
-	// print function (implementing abstract function of base class)
-	//
-	void printCamera();
-
-};
-
-
-
-} //namespace rt
-
-
-
+} // namespace rt
 
 #endif /* THINLENS_H_ */
