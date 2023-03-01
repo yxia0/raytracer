@@ -7,29 +7,36 @@
 
 #include "math/geometry.h"
 
-namespace rt{
+namespace rt
+{
 
-/*
- * Ray structure definition
- */
-enum RayType {PRIMARY, SECONDARY, SHADOW};
+	/*
+	 * Ray structure definition
+	 */
+	enum RayType
+	{
+		PRIMARY,
+		SECONDARY,
+		SHADOW
+	};
 
-struct Ray{
+	struct Ray
+	{
 
-	RayType raytype;
+		RayType raytype;
 
-	//----------Ray variables to be filled------
-};
+		//----------Ray variables to be filled------
+		Vec3f orig; /* ray origin */
+		Vec3f dir;	/* ray vector direction */
+	};
 
+	struct Hit
+	{
 
-struct Hit{
-
-	Vec3f point; //point where ray hits a shape
-	//----------Hit variables to be filled------
-
-};
-
+		Vec3f point; // point where ray hits a shape
+		//----------Hit variables to be filled------
+		bool intersect;
+	};
 }
-
 
 #endif /* CORE_RAYHITSTRUCTS_H_ */
