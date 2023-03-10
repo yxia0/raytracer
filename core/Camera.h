@@ -23,6 +23,7 @@ namespace rt
 		//
 		Camera(){};
 		Camera(int height, int width, int fov);
+		Camera(int height, int width, int fov, Vec3f position, Vec3f lookat, Vec3f up);
 		//
 		// Destructor
 		//
