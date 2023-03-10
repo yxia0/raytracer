@@ -25,6 +25,8 @@ namespace rt
 
 		Vec3f *pixelbuffer = new Vec3f[width * height];
 		auto objects = scene->getShapes();
+		auto object = objects[0];
+		object->printShape();
 
 		//----------main rendering function to be filled------
 		// TODO emit rays! Most outer loop
@@ -35,9 +37,8 @@ namespace rt
 			std::cerr << "\rScanlines remaining: " << i << ' ' << std::flush;
 			for (size_t j = 0; j < width; j++)
 			{
-
 				Ray r = camera->getRay(i, j);
-				pixelbuffer[i + j * width] = castRay(r, objects);
+				pixelbuffer[i + j * width] = castRay(r, object);
 			}
 		}
 		std::cerr << "\nDone.\n";
@@ -64,18 +65,31 @@ namespace rt
 		return pixelbuffer;
 	}
 
-	Vec3f RayTracer::castRay(Ray ray, std::vector<Shape *> shapes)
+	// Vec3f RayTracer::castRay(Ray ray, std::vector<Shape *> shapes)
+	// {
+	// 	for (size_t i = 0; i < shapes.size(); i++)
+	// 	{
+	// 		if (shapes[i]->intersect(ray))
+	// 		{
+	// 			return Vec3f(0.0, 0.8, 0.8);
+	// 		}
+	// 		else
+	// 		{
+	// 			return Vec3f(0.01, 0.01, 0.01);
+	// 		}
+	// 	}
+	// }
+
+	Vec3f RayTracer::castRay(Ray ray, Shape *shape)
 	{
-		for (size_t i = 0; i < shapes.size(); i++)
+
+		if (shape->intersect(ray))
 		{
-			if (!shapes[i]->intersect(ray).intersect)
-			{
-				return Vec3f(0.01, 0.01, 0.01);
-			}
-			else
-			{
-				return Vec3f(0.0, 0.8, 0.8);
-			}
+			return Vec3f(0.0, 0.8, 0.8);
+		}
+		else
+		{
+			return Vec3f(0.01, 0.01, 0.01);
 		}
 	}
 

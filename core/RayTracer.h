@@ -24,7 +24,7 @@ namespace rt
 		static Vec3f *tonemap(Vec3f *pixelbuffer, int bufferSize);
 
 	private:
-		static Vec3f castRay(Ray ray, std::vector<Shape *> shapes);
+		static Vec3f castRay(Ray ray, Shape *shape);
 	};
 
 } // namespace rt
