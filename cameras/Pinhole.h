@@ -20,6 +20,7 @@ namespace rt
 		//
 		Pinhole(){};
 		Pinhole(int width, int height, int fov);
+		Pinhole(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up);
 
 		//
 		// Destructor
@@ -38,6 +39,8 @@ namespace rt
 		Vec3f lower_left_corner;
 		Vec3f xDir;
 		Vec3f yDir;
+
+		void initialize();
 	};
 
 } // namespace rt
