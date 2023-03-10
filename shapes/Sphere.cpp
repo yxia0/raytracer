@@ -20,10 +20,10 @@ namespace rt
 	 * @param ray cast ray to check for intersection with shape
 	 * @return Hit struct containing intersection information
 	 */
-	Hit Sphere::intersect(Ray ray)
+	bool Sphere::intersect(Ray ray)
 	{
 
-		Hit h;
+		// Hit h;
 		// TODO
 
 		/* t^2 * b⋅b+2tb⋅(O−C)+(O−C)⋅(O−C)−r^2=0 */
@@ -35,17 +35,21 @@ namespace rt
 
 		if (discriminant < 0)
 		{
-			h.point = ray.orig - 1.0 * ray.dir;
-			h.intersect = false;
+			return false;
 		}
 		else
 		{
-			float t = (-b - sqrt(discriminant)) / (2.0 * a);
-			h.point = ray.orig - t * ray.dir;
-			h.intersect = true;
+			// float t = (-b - sqrt(discriminant)) / (2.0 * a);
+			// h.point = ray.orig - t * ray.dir;
+			return true;
 		}
+	}
 
-		return h;
+	void Sphere::printShape()
+	{
+		printf("I am a sphere! \n");
+		std::cerr << "center:" << center << std::endl;
+		printf("radius: %f\n", radius);
 	}
 
 } // namespace rt
