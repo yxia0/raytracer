@@ -15,19 +15,38 @@ namespace rt
 	//
 	Pinhole::Pinhole(int width, int height, int fov) : Camera(width, height, fov)
 	{
+		initialize();
+	}
 
-		double aspectRatio = double(height) / double(width);
-		double rfov = double(fov) * 3.14159265 / 180.0;
-		double screenWidth = 2 * tan(rfov / 2);
-		double screenHeight = aspectRatio * screenWidth;
+	Pinhole::Pinhole(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up) : Camera(width, height, fov, position, lookat, up)
+	{
+		initialize();
+	};
 
-		Vec3f z = (position - lookat).normalize();
-		Vec3f x = (z.crossProduct(up)).normalize();
-		Vec3f y = x.crossProduct(z);
+	void Pinhole::initialize()
+	{
+		double aspectRatio = double(width) / double(height);
 
-		xDir = screenWidth * x;
-		yDir = screenHeight * y;
-		lower_left_corner = position - xDir * 0.5 - yDir * 0.5 - z;
+		// Experiment with basic setting
+		double viewport_height = 2;
+		double viewport_width = aspectRatio * viewport_height;
+		double focal_len = 1;
+
+		xDir = Vec3f(viewport_width, 0, 0);
+		yDir = Vec3f(0, viewport_height, 0);
+		lower_left_corner = position - xDir * 0.5 - yDir * 0.5 - Vec3f(0, 0, focal_len);
+		// TODO: positionable camera
+		// double rfov = double(fov) * 3.14159265 / 180.0;
+		// double screenWidth = 2 * tan(rfov / 2);
+		// double screenHeight = aspectRatio * screenWidth;
+
+		// Vec3f z = (position - lookat).normalize();
+		// Vec3f x = (z.crossProduct(up)).normalize();
+		// Vec3f y = x.crossProduct(z);
+
+		// xDir = screenWidth * x;
+		// yDir = screenHeight * y;
+		// lower_left_corner = position - xDir * 0.5 - yDir * 0.5 - z;
 	}
 
 	/**
@@ -38,6 +57,7 @@ namespace rt
 	{
 		printf("I am a pinhole camera! \n");
 		printf("width: %dpx, height: %dpx, fov:%d \n", width, height, fov);
+		std::cerr << "lower left corner:" << lower_left_corner << std::endl;
 	}
 
 	Ray Pinhole::getRay(int hIndex, int wIndex)
