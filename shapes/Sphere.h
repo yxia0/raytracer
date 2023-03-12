@@ -29,7 +29,7 @@ namespace rt
 		//
 		// Functions that need to be implemented, since Sphere is a subclass of Shape
 		//
-		bool intersect(Ray ray);
+		Hit intersect(Ray ray);
 		void printShape();
 
 	private:
