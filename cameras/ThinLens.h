@@ -31,7 +31,7 @@ namespace rt
 		void printCamera();
 
 		// get ray function
-		Ray getRay(int hIndex, int wIndex);
+		Ray shoot(int hIndex, int wIndex);
 	};
 
 } // namespace rt

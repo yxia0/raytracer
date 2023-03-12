@@ -29,7 +29,7 @@ namespace rt
 		printf("width: %dpx, height: %dpx, fov:%d \n", width, height, fov);
 	}
 
-	Ray ThinLens::getRay(int hIndex, int wIndex)
+	Ray ThinLens::shoot(int hIndex, int wIndex)
 	{ /*do nothing for now*/
 	}
 } // namespace rt

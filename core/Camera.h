@@ -43,7 +43,7 @@ namespace rt
 		// other camera functions (to complete)
 		//
 
-		virtual Ray getRay(int hIndex, int wIndex) = 0;
+		virtual Ray shoot(int hIndex, int wIndex) = 0;
 
 		//
 		// Getters and Setters

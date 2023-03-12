@@ -33,7 +33,7 @@ namespace rt
 		void printCamera();
 
 		// get ray function
-		Ray getRay(int hIndex, int wIndex);
+		Ray shoot(int hIndex, int wIndex);
 
 	private:
 		Vec3f lower_left_corner;
