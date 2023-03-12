@@ -30,9 +30,9 @@ namespace rt
 	{
 
 		// parse json object to populate scene
-		importBGColor(scenespecs);
-		importLightSource(scenespecs);
-		importShapes(scenespecs);
+		readBGColor(scenespecs);
+		readLightSource(scenespecs);
+		readShapes(scenespecs);
 	}
 
 	/**
@@ -40,7 +40,7 @@ namespace rt
 	 *
 	 * @param scenespecs the json scene specificatioon
 	 */
-	void Scene::importBGColor(Value &scenespecs)
+	void Scene::readBGColor(Value &scenespecs)
 	{
 	}
 
@@ -50,7 +50,7 @@ namespace rt
 	 *
 	 * @param scenespecs the json scene specificatioon
 	 */
-	void Scene::importLightSource(Value &scenespecs)
+	void Scene::readLightSource(Value &scenespecs)
 	{
 	}
 
@@ -60,7 +60,7 @@ namespace rt
 	 *
 	 * @param scenespecs the json scene specificatioon
 	 */
-	void Scene::importShapes(Value &scenespecs)
+	void Scene::readShapes(Value &scenespecs)
 	{
 		if (!scenespecs.HasMember("shapes"))
 		{

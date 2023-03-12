@@ -30,9 +30,9 @@ namespace rt
 		std::vector<LightSource *> lightSources;
 		std::vector<Shape *> shapes;
 
-		void importBGColor(Value &scenespecs);
-		void importLightSource(Value &scenespecs);
-		void importShapes(Value &scenespecs);
+		void readBGColor(Value &scenespecs);
+		void readLightSource(Value &scenespecs);
+		void readShapes(Value &scenespecs);
 	};
 
 } // namespace rt
