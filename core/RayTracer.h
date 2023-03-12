@@ -24,7 +24,9 @@ namespace rt
 		static Vec3f *tonemap(Vec3f *pixelbuffer, int bufferSize);
 
 	private:
-		static Vec3f castRay(Ray ray, Shape *shape);
+		static Vec3f trace(Ray ray, Shape *shape);
+		static Vec3f shade(Hit hit);
+		static Hit intersect(Ray ray, Shape *shape);
 	};
 
 } // namespace rt

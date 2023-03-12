@@ -8,7 +8,7 @@ namespace rt
 {
 
 	/**
-	 * @brief Performs ray tracing to render a photorealistic scene
+	 * @brief Generate rays according to camera and display to ray trace scene
 	 *
 	 * @param camera the camera viewing the scene
 	 * @param scene the scene to render, including objects and lightsources
@@ -37,8 +37,8 @@ namespace rt
 			std::cerr << "\rScanlines remaining: " << i << ' ' << std::flush;
 			for (size_t j = 0; j < width; j++)
 			{
-				Ray r = camera->getRay(i, j);
-				pixelbuffer[i + j * width] = castRay(r, object);
+				Ray r = camera->shoot(i, j);
+				pixelbuffer[i + j * width] = trace(r, object);
 			}
 		}
 		std::cerr << "\nDone.\n";
@@ -80,17 +80,47 @@ namespace rt
 	// 	}
 	// }
 
-	Vec3f RayTracer::castRay(Ray ray, Shape *shape)
+	/**
+	 * @brief Trace ray and return color
+	 *
+	 * @param ray a ray vector
+	 * @param shape a hittable object
+	 * @return Vec3f color vector
+	 */
+	Vec3f RayTracer::trace(Ray ray, Shape *shape)
 	{
 
-		if (shape->intersect(ray))
-		{
-			return Vec3f(0.0, 0.8, 0.8);
-		}
-		else
+		Hit hit = shape->intersect(ray);
+		if (hit.t == -1 * INFINITY)
 		{
 			return Vec3f(0.01, 0.01, 0.01);
 		}
+		else
+		{
+			return Vec3f(0.0, 0.8, 0.8);
+		}
+	}
+
+	/**
+	 * @brief Return color at a hit point
+	 *
+	 * @param hit a hit record
+	 * @return Vec3f color
+	 */
+	Vec3f RayTracer::shade(Hit hit)
+	{
+	}
+
+	/**
+	 * @brief Compute intersection record hit of ray with hittable
+	 * object shape
+	 *
+	 * @param ray a ray vector
+	 * @param shape a hittable object
+	 * @return Hit a hit record
+	 */
+	Hit RayTracer::intersect(Ray ray, Shape *shape)
+	{
 	}
 
 } // namespace rt
