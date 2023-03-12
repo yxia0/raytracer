@@ -28,7 +28,7 @@ namespace rt
 		//
 		// Shape abstract methods (to be implemented by subclasses)
 		//
-		virtual bool intersect(Ray) = 0;
+		virtual Hit intersect(Ray) = 0;
 		virtual void printShape() = 0;
 
 		// protected:
