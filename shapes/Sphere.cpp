@@ -40,21 +40,29 @@ namespace rt
 			double a = sqrt(radius * radius - dist_to_sph * dist_to_sph);
 			h.t = t_close - a;
 			h.point = ray.orig + h.t * ray.dir;
+			h.normal = this->calcNormal(h.point);
 		}
 		else
 		{
 			// hit surface
 			h.t = t_close;
 			h.point = x_close;
+			h.normal = this->calcNormal(h.point);
 		}
 
 		return h;
 	}
 
+	Vec3f Sphere::calcNormal(Vec3f P)
+	{
+		/* compute normal N of the sphere at surface point P */
+		return (P - center).normalize();
+	}
+
 	void Sphere::printShape()
 	{
 		printf("sphere: ");
-		std::cerr << "center " << center;
+		std::cout << "center " << center;
 		printf(" radius %.2f\n", radius);
 	}
 

@@ -24,7 +24,7 @@ namespace rt
 		Sphere(){};
 		Sphere(Vec3f center, float radius) : center(center), radius(radius){};
 
-		virtual ~Sphere();
+		~Sphere();
 
 		//
 		// Functions that need to be implemented, since Sphere is a subclass of Shape
@@ -35,6 +35,7 @@ namespace rt
 	private:
 		Vec3f center;
 		float radius;
+		Vec3f calcNormal(Vec3f P);
 	};
 
 } // namespace rt
