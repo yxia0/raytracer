@@ -72,8 +72,9 @@ namespace rt
 		double yp = (double(hIndex) + 0.5) / double(width);
 
 		r.raytype = PRIMARY;
-		r.orig = position;															  // camera position
-		r.dir = ((lower_left_corner + xDir * xp + yDir * yp) - position).normalize(); // unit vector
+		r.orig = position;
+		r.pix_center = lower_left_corner + xDir * xp + yDir * yp; // camera position
+		r.dir = (r.pix_center - position).normalize();			  // unit vector
 
 		return r;
 	}
