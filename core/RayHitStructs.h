@@ -28,13 +28,14 @@ namespace rt
 		//----------Ray variables to be filled------
 		Vec3f orig; /* ray origin */
 		Vec3f dir;	/* ray direction - unit vector */
+		Vec3f pix_center;
 	};
 
 	struct Hit
 	{
-
-		Vec3f point; // point where ray hits a shape
 		double t;
+		Vec3f point;  // point where ray hits a shape
+		Vec3f normal; // surface normal of hit point
 	};
 }
 
