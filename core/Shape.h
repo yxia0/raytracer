@@ -28,11 +28,12 @@ namespace rt
 		//
 		// Shape abstract methods (to be implemented by subclasses)
 		//
-		virtual Hit intersect(Ray) = 0;
+		virtual Hit intersect(Ray ray) = 0;
 		virtual void printShape() = 0;
 
-		// protected:
+	protected:
 		// 	Material *material;
+		virtual Vec3f calcNormal(Vec3f P) = 0;
 	};
 
 } // namespace rt
