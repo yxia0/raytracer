@@ -8,6 +8,9 @@
 #include "math/geometry.h"
 #include "core/Camera.h"
 #include "core/Scene.h"
+#include "core/RayHitStructs.h"
+#include "core/Shape.h"
+#include "lights/PointLight.h"
 
 namespace rt
 {
@@ -24,8 +27,9 @@ namespace rt
 		static Vec3f *tonemap(Vec3f *pixelbuffer, int bufferSize);
 
 	private:
-		static Vec3f trace(Ray ray, Shape *shape);
-		static Vec3f shade(Hit hit);
+		static Vec3f trace(Ray ray, Shape *shape, PointLight *light);
+		// TODO: generalise to light
+		static Vec3f shade(Ray ray, Hit hit, PointLight *light); // TODO: generalize to light
 		static Hit intersect(Ray ray, Shape *shape);
 	};
 

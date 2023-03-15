@@ -2,6 +2,7 @@
  * RayTracer.cpp
  *
  */
+#include <algorithm>
 #include "RayTracer.h"
 
 namespace rt
@@ -25,12 +26,10 @@ namespace rt
 
 		Vec3f *pixelbuffer = new Vec3f[width * height];
 		auto objects = scene->getShapes();
+		auto lights = scene->getLights();
 		auto object = objects[0];
-		object->printShape();
-
-		//----------main rendering function to be filled------
-		// TODO emit rays! Most outer loop
-		// TODO cast ray on objects --> put into a function
+		auto light = lights[0];
+		object->printShape(); // for debugging
 
 		for (size_t i = 0; i < height; i++)
 		{
@@ -38,7 +37,7 @@ namespace rt
 			for (size_t j = 0; j < width; j++)
 			{
 				Ray r = camera->shoot(i, j);
-				pixelbuffer[i + j * width] = trace(r, object);
+				pixelbuffer[i + j * width] = trace(r, object, light); // TODO: add lights
 			}
 		}
 		std::cerr << "\nDone.\n";
@@ -81,24 +80,42 @@ namespace rt
 	// }
 
 	/**
-	 * @brief Trace ray and return color
+	 * @brief Trace ray and return color.
+	 * Find first intersection for t>O and shade it.
 	 *
 	 * @param ray a ray vector
 	 * @param shape a hittable object
 	 * @return Vec3f color vector
 	 */
-	Vec3f RayTracer::trace(Ray ray, Shape *shape)
+	Vec3f RayTracer::trace(Ray ray, Shape *shape, PointLight *light)
 	{
 
-		Hit hit = shape->intersect(ray);
-		if (hit.t == -1 * INFINITY)
+		Hit hit;
+		hit = intersect(ray, shape);
+		/** TODO: negation of normal */
+		if (ray.dir.dotProduct(hit.normal) > 0)
 		{
-			return Vec3f(0.01, 0.01, 0.01);
+			hit.normal *= -1;
+		}
+
+		if (hit.t != INFINITY)
+		{
+			return shade(ray, hit, light);
 		}
 		else
 		{
-			return Vec3f(0.0, 0.8, 0.8);
+			// TODO: background color
+			return Vec3f(0.01, 0.01, 0.01);
 		}
+
+		// if (hit.t == -1 * INFINITY)
+		// {
+		// 	return Vec3f(0.01, 0.01, 0.01);
+		// }
+		// else
+		// {
+		// 	return Vec3f(0.0, 0.8, 0.8);
+		// }
 	}
 
 	/**
@@ -107,8 +124,21 @@ namespace rt
 	 * @param hit a hit record
 	 * @return Vec3f color
 	 */
-	Vec3f RayTracer::shade(Hit hit)
+	Vec3f RayTracer::shade(Ray ray, Hit hit, PointLight *light)
 	{
+		// add light source
+		Vec3f light_dir = (light->getPos() - hit.point).normalize();
+		/* Compute diffuse TODO: for all lights */
+		Vec3f diffuse_intensity = light->getId() * fmax(0.f, light_dir.dotProduct(hit.normal));
+		/* Compute specular - recursion */
+		Vec3f view_dir = (ray.pix_center - hit.point).normalize();
+		Vec3f bisector = (light_dir + view_dir).normalize();
+		Vec3f specular_intensity = light->getIs() *
+								   powf(fmax(0.f, hit.normal.dotProduct(bisector)), 16);
+		// exponent - shininess
+
+		return Vec3f(0.1, 0.3, 0.4) * diffuse_intensity * 0.6 + specular_intensity * 0.3;
+		// return Vec3f(0.4, 0.3, 0.4);
 	}
 
 	/**
@@ -118,9 +148,12 @@ namespace rt
 	 * @param ray a ray vector
 	 * @param shape a hittable object
 	 * @return Hit a hit record
+	 * TODO: this will be extended to a list of hit records
 	 */
 	Hit RayTracer::intersect(Ray ray, Shape *shape)
 	{
+		/** TODO: loop over shapes */
+		return shape->intersect(ray);
 	}
 
 } // namespace rt
