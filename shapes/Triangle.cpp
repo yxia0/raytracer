@@ -72,20 +72,22 @@ namespace rt
 
     bool Triangle::insideTriangle(Vec3f P)
     {
-        Vec3f v_n = (vertices[2] - vertices[1]).crossProduct(vertices[1] - vertices[0]);
-        float A = v_n.norm();
-        Vec3f n = v_n / A;
-        float u = ((vertices[2] - vertices[1]).crossProduct(P - vertices[1])).dotProduct(n) / A;
-        float v = ((vertices[0] - vertices[2]).crossProduct(P - vertices[2])).dotProduct(n) / A;
+        Vec3f v0 = vertices[2] - vertices[0];
+        Vec3f v1 = vertices[1] - vertices[0];
+        Vec3f v2 = P - vertices[0];
 
-        if (u >= 0 & v >= 0 & (u + v) <= 1)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        float dot00 = v0.dotProduct(v0);
+        float dot01 = v0.dotProduct(v1);
+        float dot02 = v0.dotProduct(v2);
+        float dot11 = v1.dotProduct(v1);
+        float dot12 = v1.dotProduct(v2);
+
+        // compute barycentric coordinates
+        float denom = dot00 * dot11 - dot01 * dot01;
+        float u = (dot11 * dot02 - dot01 * dot12) / denom;
+        float v = (dot00 * dot12 - dot01 * dot02) / denom;
+
+        return (u >= 0 & v >= 0 & (u + v) <= 1);
     }
 
 } // namespace rt
