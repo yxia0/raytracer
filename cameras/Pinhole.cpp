@@ -37,7 +37,7 @@ namespace rt
 
 		xDir = Vec3f(viewport_width, 0, 0);
 		yDir = Vec3f(0, viewport_height, 0);
-		lower_left_corner = position - xDir * 0.5 - yDir * 0.5 - Vec3f(0, 0, focal_len);
+		top_left_corner = position - xDir * 0.5 + yDir * 0.5 - Vec3f(0, 0, focal_len);
 		// TODO: positionable camera
 		// double fovRadian = double(fov) * 3.14159265 / 180.0;
 		// double screenWidth = 2 * tan(rfov / 2);
@@ -73,7 +73,7 @@ namespace rt
 
 		r.raytype = PRIMARY;
 		r.orig = position;
-		r.pix_center = lower_left_corner + xDir * xp + yDir * yp; // camera position
+		r.pix_center = lower_left_corner + xDir * xp - yDir * yp; // camera position
 		r.dir = (r.pix_center - position).normalize();			  // unit vector
 
 		return r;
