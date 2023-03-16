@@ -20,9 +20,8 @@ namespace rt
 	Vec3f *RayTracer::render(Camera *camera, Scene *scene, int nbounces)
 	{
 
-		int width, height;
-		width = camera->getWidth();
-		height = camera->getHeight();
+		const int width = camera->getWidth();
+		const int height = camera->getHeight();
 
 		Vec3f *pixelbuffer = new Vec3f[width * height];
 		auto objects = scene->getShapes();
@@ -37,7 +36,7 @@ namespace rt
 			for (size_t j = 0; j < width; j++)
 			{
 				Ray r = camera->shoot(i, j);
-				pixelbuffer[i + j * width] = trace(r, object, light); // TODO: add lights
+				pixelbuffer[i * width + j] = trace(r, object, light);
 			}
 		}
 		std::cerr << "\nDone.\n";
