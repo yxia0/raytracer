@@ -32,7 +32,7 @@ namespace rt
 		if (dist_to_sph > radius)
 		{
 			// no intersection
-			h.t = -1 * INFINITY;
+			h.t = INFINITY;
 		}
 		else if (dist_to_sph < radius)
 		{
@@ -41,6 +41,7 @@ namespace rt
 			h.t = t_close - a;
 			h.point = ray.orig + h.t * ray.dir;
 			h.normal = this->calcNormal(h.point);
+			h.material = this->getMaterial();
 		}
 		else
 		{
@@ -48,6 +49,7 @@ namespace rt
 			h.t = t_close;
 			h.point = x_close;
 			h.normal = this->calcNormal(h.point);
+			h.material = this->getMaterial();
 		}
 
 		return h;
