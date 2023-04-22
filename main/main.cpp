@@ -48,7 +48,8 @@ int main(int argc, char *argv[])
 	//
 	// Main function, render scene
 	//
-	Vec3f *pixelbuffer = RayTracer::render(camera, scene, d["nbounces"].GetInt());
+	RayTracer raytracer = RayTracer();
+	Vec3f *pixelbuffer = raytracer.render(camera, scene, d["nbounces"].GetInt());
 
 	// free resources when rendering is finished
 	// delete camera;
