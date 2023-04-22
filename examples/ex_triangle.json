@@ -1,0 +1,51 @@
+{
+"nbounces":6,
+"camera":{
+    "type":"pinhole",
+    "width":800,
+    "height":800,
+    "fov":60,
+    "position": [0.0, 0.0, 0.0],
+    "lookat": [0.0, 0.0, -1.0],
+    "up": [0.0, 1.0, 0.0]
+},
+"scene":{
+    "backgroundcolor":[0.01, 0.01, 0.01],
+    "lightsources": [
+    {
+        "type": "pointlight",
+        "position": [0.0, -0.5, 1.1],
+        "is": [1.0, 1.0, 1.0],
+        "id": [1.0, 1.0, 1.0]
+    }
+    ],
+    "shapes":[
+    {
+       "type": "triangle",
+        "v0": [0.0, 0.0, -3.0],
+        "v1": [0.5, -0.5, -3.0],
+        "v2": [-0.5, -0.5, -3.0],
+        "material":{
+            "ks":0.3,
+            "kd":0.4,
+            "kr": 0.1,
+            "specularexponent": 3,
+            "diffusecolor":[0.2, 0.5, 0.4]
+        }
+    },
+    {
+       "type": "triangle",
+        "v0": [0.0, 0.0, -3.0],
+        "v1": [0.5, 0.5, -3.0],
+        "v2": [-0.5, 0.5, -3.0],
+        "material":{
+            "ks":0.3,
+            "kd":0.4,
+            "kr": 0.6,
+            "specularexponent": 2,
+            "diffusecolor":[0.09, 0.3, 0.23]
+        }
+    }
+    ]
+}
+}
