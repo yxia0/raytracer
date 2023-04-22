@@ -99,6 +99,7 @@ namespace rt
             hit.t = t_hit;
             hit.point = x_hit;
             hit.normal = calcNormal(hit.point);
+            hit.material = this->getMaterial();
         }
         else
         {
