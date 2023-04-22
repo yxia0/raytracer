@@ -20,15 +20,15 @@ namespace rt
 	Vec3f *RayTracer::render(Camera *camera, Scene *scene, int nbounces)
 	{
 
+		this->background = scene->getBackground();
+		this->nbounces = nbounces;
+
 		const int width = camera->getWidth();
 		const int height = camera->getHeight();
 
 		Vec3f *pixelbuffer = new Vec3f[width * height];
-		auto objects = scene->getShapes();
+		auto shapes = scene->getShapes();
 		auto lights = scene->getLights();
-		auto object = objects[0];
-		auto light = lights[0];
-		object->printShape(); // for debugging
 
 		for (size_t i = 0; i < height; i++)
 		{
@@ -36,7 +36,7 @@ namespace rt
 			for (size_t j = 0; j < width; j++)
 			{
 				Ray r = camera->shoot(i, j);
-				pixelbuffer[i * width + j] = trace(r, object, light);
+				pixelbuffer[i * width + j] = trace(r, shapes, lights, 0);
 			}
 		}
 		std::cerr << "\nDone.\n";
@@ -53,30 +53,12 @@ namespace rt
 	 */
 	Vec3f *RayTracer::tonemap(Vec3f *pixelbuffer, int bufferSize)
 	{
-
-		//---------tonemapping function to be filled--------
 		for (size_t i = 0; i < bufferSize; i++)
 		{
 			pixelbuffer[i] *= 225;
 		}
-
 		return pixelbuffer;
 	}
-
-	// Vec3f RayTracer::castRay(Ray ray, std::vector<Shape *> shapes)
-	// {
-	// 	for (size_t i = 0; i < shapes.size(); i++)
-	// 	{
-	// 		if (shapes[i]->intersect(ray))
-	// 		{
-	// 			return Vec3f(0.0, 0.8, 0.8);
-	// 		}
-	// 		else
-	// 		{
-	// 			return Vec3f(0.01, 0.01, 0.01);
-	// 		}
-	// 	}
-	// }
 
 	/**
 	 * @brief Trace ray and return color.
@@ -86,35 +68,43 @@ namespace rt
 	 * @param shape a hittable object
 	 * @return Vec3f color vector
 	 */
-	Vec3f RayTracer::trace(Ray ray, Shape *shape, PointLight *light)
+	Vec3f RayTracer::trace(Ray ray, std::vector<Shape *> shapes, std::vector<LightSource *> lights, int nbounces)
 	{
+		if (nbounces > this->nbounces)
+		{
+			return Vec3f(0, 0, 0);
+		}
 
 		Hit hit;
-		hit = intersect(ray, shape);
-		/** TODO: negation of normal */
+		hit = intersect(ray, shapes);
+		Vec3f color = Vec3f(0, 0, 0);
+		/** negation of normal */
+		hit.enter_object = true;
 		if (ray.dir.dotProduct(hit.normal) > 0)
 		{
 			hit.normal *= -1;
+			hit.enter_object = false;
 		}
 
 		if (hit.t != INFINITY)
 		{
-			return shade(ray, hit, light);
+			color = shade(ray, hit, lights, shapes); // direct illumination
+			// reflection
+			Ray reflect_ray = createReflectRay(ray, hit);
+			color = color + hit.material->getKr() * trace(reflect_ray, shapes, lights, nbounces + 1);
+			// refraction - assume scene environment is vaccum
+			Ray refract_ray = createRefractRay(ray, hit);
+			if (refract_ray.can_refract)
+			{
+				color += hit.material->getKt() * trace(refract_ray, shapes, lights, nbounces + 1);
+			}
 		}
 		else
 		{
-			// TODO: background color
-			return Vec3f(0.01, 0.01, 0.01);
+			color += this->background;
 		}
 
-		// if (hit.t == -1 * INFINITY)
-		// {
-		// 	return Vec3f(0.01, 0.01, 0.01);
-		// }
-		// else
-		// {
-		// 	return Vec3f(0.0, 0.8, 0.8);
-		// }
+		return color;
 	}
 
 	/**
@@ -123,21 +113,26 @@ namespace rt
 	 * @param hit a hit record
 	 * @return Vec3f color
 	 */
-	Vec3f RayTracer::shade(Ray ray, Hit hit, PointLight *light)
+	Vec3f RayTracer::shade(Ray ray, Hit hit, std::vector<LightSource *> lights, std::vector<Shape *> shapes)
 	{
-		// add light source
-		Vec3f light_dir = (light->getPos() - hit.point).normalize();
-		/* Compute diffuse TODO: for all lights */
-		Vec3f diffuse_intensity = light->getId() * fmax(0.f, light_dir.dotProduct(hit.normal));
-		/* Compute specular - recursion */
-		Vec3f view_dir = (ray.pix_center - hit.point).normalize();
-		Vec3f bisector = (light_dir + view_dir).normalize();
-		Vec3f specular_intensity = light->getIs() *
-								   powf(fmax(0.f, hit.normal.dotProduct(bisector)), 16);
-		// exponent - shininess
+		if (hit.t == INFINITY)
+		{
+			return this->background;
+		}
 
-		return Vec3f(0.1, 0.3, 0.4) * diffuse_intensity * 0.6 + specular_intensity * 0.3;
-		// return Vec3f(0.4, 0.3, 0.4);
+		Vec3f diffuse_color(0, 0, 0);
+		Vec3f specular_color(0, 0, 0);
+		Vec3f color(0, 0, 0);
+
+		for (LightSource *light : lights)
+		{
+			Vec3f atten = shadowAttenuation((PointLight *)light, hit, shapes);
+			diffuse_color += diffuseColor((PointLight *)light, hit);
+			specular_color += specularColor(ray, (PointLight *)light, hit);
+			color = color + atten * (diffuse_color + specular_color);
+		}
+
+		return color;
 	}
 
 	/**
@@ -149,10 +144,102 @@ namespace rt
 	 * @return Hit a hit record
 	 * TODO: this will be extended to a list of hit records
 	 */
-	Hit RayTracer::intersect(Ray ray, Shape *shape)
+	Hit RayTracer::intersect(Ray ray, std::vector<Shape *> shapes)
 	{
-		/** TODO: loop over shapes */
-		return shape->intersect(ray);
+		Hit hit;
+		hit.t = INFINITY; // current min t
+
+		for (size_t i = 0; i < shapes.size(); i++)
+		{
+			Hit curr_hit = shapes[i]->intersect(ray);
+			if (curr_hit.t < hit.t & curr_hit.t >= 0)
+			{
+				hit = curr_hit;
+			}
+		}
+		return hit;
+	}
+
+	Vec3f RayTracer::shadowAttenuation(PointLight *light, Hit hit, std::vector<Shape *> shapes)
+	{
+		float light_distance = (light->getPos() - hit.point).norm();
+		Vec3f light_dir = (light->getPos() - hit.point).normalize();
+
+		// create shadow ray
+		Ray shadow_ray;
+		shadow_ray.orig = light_dir.dotProduct(hit.normal) < 0 ? hit.point - hit.normal * 1e-3 : hit.point + hit.normal * 1e-3;
+		shadow_ray.dir = light_dir;
+
+		if (!isShadow(shadow_ray, shapes, light_distance))
+		{
+			return Vec3f(1, 1, 1);
+		}
+		else
+		{
+			return Vec3f(0, 0, 0);
+		}
+	}
+
+	bool RayTracer::isShadow(Ray shadow_ray, std::vector<Shape *> shapes, float light_distance)
+	{
+		Hit hit = intersect(shadow_ray, shapes);
+
+		if (hit.t != INFINITY && (hit.point - shadow_ray.orig).norm() < light_distance)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	Vec3f RayTracer::diffuseColor(PointLight *light, Hit hit)
+	{
+		Vec3f light_dir = (light->getPos() - hit.point).normalize();
+		return light->getId() * fmax(0.f, light_dir.dotProduct(hit.normal)) * hit.material->getKd() * hit.material->getColor();
+	}
+
+	Vec3f RayTracer::specularColor(Ray ray, PointLight *light, Hit hit)
+	{
+
+		Vec3f light_dir = (light->getPos() - hit.point).normalize();
+		Vec3f view_dir = (ray.pix_center - hit.point).normalize();
+		Vec3f bisector = (light_dir + view_dir).normalize();
+
+		return light->getIs() * powf(fmax(0.f, hit.normal.dotProduct(bisector)), hit.material->getSpecularExp()) * hit.material->getKs();
+	}
+
+	Ray RayTracer::createReflectRay(Ray ray, Hit hit)
+	{
+		Vec3f reflection_dir = (ray.dir - 2 * hit.normal * (hit.normal.dotProduct(ray.dir))).normalize();
+		Vec3f reflection_point = reflection_dir.dotProduct(hit.normal) < 0 ? hit.point - hit.normal * 1e-3 : hit.point + hit.normal * 1e-3;
+
+		Ray reflect_ray;
+		reflect_ray.orig = reflection_point;
+		reflect_ray.dir = reflection_dir;
+		return reflect_ray;
+	}
+
+	Ray RayTracer::createRefractRay(Ray ray, Hit hit)
+	{
+		Ray refract_ray;
+		float refraction_ratio = hit.enter_object ? (1.0 / hit.material->getIor()) : hit.material->getIor();
+		double cos_theta = fmin(-ray.dir.normalize().dotProduct(hit.normal), 1.0);
+		double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+
+		if (refraction_ratio * sin_theta > 1)
+		{
+			refract_ray.can_refract = false;
+		}
+		else
+		{
+			// can refract
+			refract_ray.can_refract = true;
+			Vec3f refract_ray_perp = refraction_ratio * (ray.dir.normalize() + cos_theta * hit.normal);
+			Vec3f refract_ray_parallel = -sqrt(fabs(1.0 - refract_ray_perp.norm())) * hit.normal;
+			refract_ray.dir = refract_ray_perp + refract_ray_parallel;
+			refract_ray.orig = hit.point;
+		}
+
+		return refract_ray;
 	}
 
 } // namespace rt
