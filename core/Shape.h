@@ -7,7 +7,7 @@
 #define SHAPE_H_
 
 #include "core/RayHitStructs.h"
-// #include "core/Material.h"
+#include "core/Material.h"
 
 namespace rt
 {
@@ -30,9 +30,11 @@ namespace rt
 		//
 		virtual Hit intersect(Ray ray) = 0;
 		virtual void printShape() = 0;
+		void addMaterial(Material *material);
+		Material *getMaterial();
 
 	protected:
-		// 	Material *material;
+		Material *material;
 		virtual Vec3f calcNormal(Vec3f P) = 0;
 	};
 
