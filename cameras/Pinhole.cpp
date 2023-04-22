@@ -13,10 +13,6 @@ namespace rt
 	//
 	// Pinhole constructor (example)
 	//
-	Pinhole::Pinhole(int width, int height, int fov) : Camera(width, height, fov)
-	{
-		initialize();
-	}
 
 	Pinhole::Pinhole(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up) : Camera(width, height, fov, position, lookat, up)
 	{
@@ -35,17 +31,26 @@ namespace rt
 		double viewport_width = aspectRatio * viewport_height;
 		double focal_len = 1;
 
+		// old camera default position
 		xDir = Vec3f(viewport_width, 0, 0);
 		yDir = Vec3f(0, viewport_height, 0);
 		top_left_corner = position - xDir * 0.5 + yDir * 0.5 - Vec3f(0, 0, focal_len);
 		// TODO: positionable camera
+		// transformed coordinate
 		// double fovRadian = double(fov) * 3.14159265 / 180.0;
 		// double screenWidth = 2 * tan(rfov / 2);
 		// double screenHeight = aspectRatio * screenWidth;
 
-		// Vec3f z = (position - lookat).normalize();
-		// Vec3f x = (z.crossProduct(up)).normalize();
-		// Vec3f y = x.crossProduct(z);
+		// Vec3f zDir = (position - lookat).normalize();
+		// // std::cout << "z direction is: " << zDir << std::endl;
+		// xDir = (up.crossProduct(zDir)).normalize();
+		// // std::cout << "x direction is: " << xDir << std::endl;
+		// yDir = zDir.crossProduct(xDir);
+		// // std::cout << "y direction is: " << yDir << std::endl;
+
+		// top_left_corner = position - xDir * viewport_width * 0.5 + yDir * viewport_height * 0.5 - zDir;
+
+		// Vec3f(0, 0, focal_len);
 
 		// xDir = screenWidth * x;
 		// yDir = screenHeight * y;
@@ -58,9 +63,11 @@ namespace rt
 	 */
 	void Pinhole::printCamera()
 	{
-		printf("I am a pinhole camera! \n");
+		printf("Pinhole camera specs: \n");
 		printf("width: %dpx, height: %dpx, fov:%d \n", width, height, fov);
-		std::cerr << "lower left corner:" << lower_left_corner << std::endl;
+		std::cerr << "position: " << position << std::endl;
+		std::cerr << "lookat:" << lookat << std::endl;
+		std::cerr << "up:" << up << std::endl;
 	}
 
 	Ray Pinhole::shoot(int hIndex, int wIndex)
@@ -73,8 +80,8 @@ namespace rt
 
 		r.raytype = PRIMARY;
 		r.orig = position;
-		r.pix_center = lower_left_corner + xDir * xp - yDir * yp; // camera position
-		r.dir = (r.pix_center - position).normalize();			  // unit vector
+		r.pix_center = top_left_corner + xDir * xp - yDir * yp; // camera position
+		r.dir = (r.pix_center - position).normalize();			// unit vector
 
 		return r;
 	}

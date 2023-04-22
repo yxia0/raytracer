@@ -19,7 +19,6 @@ namespace rt
 		// Constructors
 		//
 		Pinhole(){};
-		Pinhole(int width, int height, int fov);
 		Pinhole(int width, int height, int fov, Vec3f position, Vec3f lookat, Vec3f up);
 
 		//
@@ -36,7 +35,7 @@ namespace rt
 		Ray shoot(int hIndex, int wIndex);
 
 	private:
-		Vec3f lower_left_corner;
+		Vec3f top_left_corner;
 		Vec3f xDir;
 		Vec3f yDir;
 
